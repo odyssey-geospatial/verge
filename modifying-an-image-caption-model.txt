@@ -1,0 +1,41 @@
+This is from OpenAI, telling how to modify a hugface model that does image
+captioning so that it accepts arbitrary inputs instead.
+---
+
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import torch
+import torch.nn as nn
+
+class CustomImageCaptioningModel(GPT2LMHeadModel):
+    def __init__(self, config):
+        super().__init__(config)
+        # Assume the embedding dimension from your image embeddings is 2048 (e.g., ResNet50)
+        self.image_embedding_size = 2048  # This should match the size of your custom embeddings
+
+        # Adjust the input embeddings layer to accept image embeddings
+        # Instead of using the original token embeddings, we'll use a linear layer to project the image embeddings to the same dimension
+        self.image_projection = nn.Linear(self.image_embedding_size, config.n_embd)
+
+    def forward(self, image_embeddings, labels=None):
+        # Project image embeddings to match the transformer input dimension (n_embd)
+        projected_embeddings = self.image_projection(image_embeddings)
+
+        # Convert the projected embeddings into a format that the model can process
+        # We need to repeat the projected image embeddings across the sequence length dimension
+        # (e.g., the number of tokens in the caption) for the GPT-2 model to process them as part of the input sequence
+        projected_embeddings = projected_embeddings.unsqueeze(1).repeat(1, 20, 1)  # Adjust 20 to sequence length
+
+        # Now, pass the projected image embeddings into the GPT2 transformer
+        outputs = super().forward(inputs_embeds=projected_embeddings, labels=labels)
+        return outputs
+
+# Initialize model with GPT-2 configuration
+from transformers import GPT2Config
+
+model_config = GPT2Config.from_pretrained("gpt2")
+model = CustomImageCaptioningModel(model_config)
+
+# Initialize tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
+
