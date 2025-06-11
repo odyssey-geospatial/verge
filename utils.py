@@ -3,34 +3,12 @@
 #
 
 
-    {
-        'key': 'highway',
-        'values': ['crossing'],
-        'gtype': 'Point',
-        'category': 'roadway feature',
-        'label': 'traffic signals',
-    },
-
-
-
 highway_rules = [
     {
         'category': 'roadway feature',
         'label': 'traffic signals',
         'gtype': 'Point',
-        'keys': {'highway': ['crossing'], 'crossing': ['traffic_signals']},
-    },
-    {
-        'category': 'roadway feature',
-        'label': 'traffic signals',
-        'gtype': 'Point',
         'keys': {'highway': ['traffic_signals']},
-    },
-    {
-        'category': 'roadway feature',
-        'label': 'crosswalk', 
-        'gtype': 'Point',
-        'keys': {'highway': ['crossing'], 'crossing': ['marked']}
     },
     {
         'category': 'roadway feature',
@@ -348,6 +326,7 @@ rules = {
     'amenity': amenity_rules,
     'shop': amenity_rules,  # yes, that is correct
     'leisure': amenity_rules,  # yes, that is correct
-    
 }
+
+
 
