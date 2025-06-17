@@ -150,6 +150,37 @@ rules = [
         "gent_category": "waterway",
         "gent_label": "stream"
     },
+    # Polygonal rivers
+    {
+        "osm_key": "water",
+        "osm_values": [
+            "river"
+        ],
+        "gtype": "Polygon",
+        "gent_category": "waterway",
+        "gent_label": "river"
+    },
+    # Lakes, ponds, and reservoirs
+    {
+        "osm_key": "water",
+        "osm_values": [
+            "lake", 'pond', 'oxbow'
+        ],
+        "gtype": "Polygon",
+        "gent_category": "waterway",
+        "gent_label": "lake"
+    },
+    {
+        "osm_key": "water",
+        "osm_values": [
+            'reservoir'
+        ],
+        "gtype": "Polygon",
+        "gent_category": "waterway",
+        "gent_label": "reservoir"
+    },
+
+    
     {
         "osm_key": "waterway",
         "osm_values": [
@@ -299,7 +330,7 @@ rules = [
             "yes"
         ],
         "gtype": "LineString",
-        "gent_category": "tunnel",
+        "gent_category": "roadway feature",
         "gent_label": "tunnel"
     },
     {

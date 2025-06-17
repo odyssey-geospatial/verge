@@ -1,0 +1,51 @@
+id,label
+0,amenity : commercial
+1,amenity : food and drink
+2,amenity : parking lot
+3,amenity : recreation
+4,amenity : religious
+5,building : apartment
+6,building : commercial
+7,building : garage
+8,building : hospital
+9,building : house
+10,building : industrial
+11,building : office
+12,building : religious
+13,building : school
+14,building : unknown
+15,landuse : agricultural
+16,landuse : cemetery
+17,landuse : commercial
+18,landuse : forest
+19,landuse : industrial
+20,landuse : meadow
+21,landuse : military
+22,landuse : recreation
+23,landuse : residential
+24,landuse : retail
+25,railway : rail
+26,railway : rail stop
+27,railway : tram
+28,roadway feature : bridge
+29,roadway feature : crosswalk
+30,roadway feature : street lamp
+31,roadway feature : traffic signals
+32,roadway feature : transit stop
+33,roadway feature : tunnel
+34,route : cycle way
+35,route : highway
+36,route : pedestrian way
+37,route : primary road
+38,route : residential road
+39,route : secondary road
+40,route : service road
+41,route : tertiary road
+42,token : mask
+43,token : pad
+44,waterway : canal
+45,waterway : lake
+46,waterway : land
+47,waterway : reservoir
+48,waterway : river
+49,waterway : stream
