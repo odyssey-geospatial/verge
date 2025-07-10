@@ -12,3 +12,7 @@ So they contain some setup material that is specific to that environment.
 These sections are clearly marked towards the top of each notebook.
 To run locally, such sections can be commented out. 
 
+### Contribution Policy
+
+This repository is provided as-is for educational or private use. 
+No pull requests or other contributions will be reviewed or merged.
