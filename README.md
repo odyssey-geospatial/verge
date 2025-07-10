@@ -36,3 +36,8 @@ https://odyssey-geospatial.ghost.io/masked-geospatial-modeling-towards-vector-mo
 * 01-feature-eda: Exploratory analysis on geographical features available from OSM
 * 02-mgm: R&D on Masked Geospatial Modeling
 
+### Contribution Policy
+
+This repository is provided as-is for educational or private use. 
+No pull requests or other contributions will be reviewed or merged.
+
