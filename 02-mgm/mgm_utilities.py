@@ -89,7 +89,7 @@ rules = [
     {
         "osm_key": "highway",
         "osm_values": [
-            "residential"
+            "residential", "unclassified", "track"
         ],
         "gtype": "LineString",
         "gent_category": "route",
@@ -149,6 +149,15 @@ rules = [
         "osm_key": "water",
         "osm_values": [
             "lake", 'pond', 'oxbow', 'reservoir'
+        ],
+        "gtype": "Polygon",
+        "gent_category": "waterway",
+        "gent_label": "lakes and ponds"
+    },
+    {
+        "osm_key": "natural",
+        "osm_values": [
+            "water"
         ],
         "gtype": "Polygon",
         "gent_category": "waterway",
