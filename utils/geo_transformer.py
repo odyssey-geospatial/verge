@@ -13,55 +13,40 @@ from torch.utils.data import DataLoader
 
 class VergeDataset(torch.utils.data.Dataset):
 
-    def __init__(self, data_list, n_classes, mask_fraction):
-        self.data = data_list
+    def __init__(self, instance_fnames, n_classes, mask_fraction, class_prob):
+        self.instance_fnames = instance_fnames
         self.n_classes = n_classes
         self.mask_fraction = mask_fraction
-        self.encoding_dim = data_list[0].shape[1] - self.n_classes
-        # print('encoding_dim', self.encoding_dim)
-        # print('n_classes', self.n_classes)
+        self.class_prob = class_prob
 
-        # When accessing any item, we will also be sampling from its available classes.
-        # But this dataset has a big class imbalance, so we will sample according
-        # to inverse probability. Here we compute the probability distribution of classes.
-        self.class_prob = {z: 0.0 for z in range(self.n_classes)}
-        n = 0.0
-        for d in data_list:
-            true_labels_onehot = d[:, :self.n_classes]
-            true_labels = np.argmax(true_labels_onehot, axis=1)
-            for label in true_labels:
-                self.class_prob[label] += 1.0
-            n += len(true_labels)
-        for label in self.class_prob:
-            self.class_prob[label] /= n
-
+    
     def __len__(self):
-        return len(self.data)
+        return len(self.instance_fnames)
 
+    
     def __getitem__(self, idx):
 
-        features = self.data[idx]
+        # Get the features and labels from a file.
+        #features = self.data[idx]
+        loaded = np.load(self.instance_fnames[idx])
+        features = loaded['features']
+        true_labels = loaded['labels']
+
         encodings = features[:, self.n_classes:]
         true_labels_onehot = features[:, :self.n_classes]
-        true_labels = np.argmax(true_labels_onehot, axis=1)
         n_entities = features.shape[0]
 
-        # Sample eneite to mask. This weights the sampling by the relative
+        # Sample entities to mask. This weights the sampling by the relative
         # frequency of different classes in the dataset -- i.e. it addresses
         # class imbalance.
         weights = []
         for label in true_labels:
             prob = self.class_prob[label]
-            weights.append(1.0 / (prob + 0.001))
+            weights.append(1.0 / (prob + 0.00001))
         weights = np.array(weights)
         weights = weights / np.sum(weights)
         sample_size = int(np.ceil(self.mask_fraction * n_entities))
         mask_indices = np.random.choice(n_entities, size=sample_size, replace=True, p=weights)
-
-        # The old way: no weighting in selection of masked entities.
-        # mask = np.random.rand(n_entities) < self.mask_fraction
-        # mask_indices = np.where(mask)[0]
-        # print('mask_indices', mask_indices)
 
         # In the feature array, labels are one-hot vectors that get concatenated
         # with the geometric encodings. To "mask" those labels, we replace the
@@ -80,7 +65,7 @@ class VergeDataset(torch.utils.data.Dataset):
         )
 
         # During model training below, we will be using the "CrossEntropyLoss" function,
-        # which has a built-in capability to ignore elements thatwe don't care about,
+        # which has a built-in capability to ignore elements that we don't care about,
         # which in this case is any element that is NOT masked. To get it to work,
         # we need to pack an "ignore" token into any label slot that is not masked.
         # Pytorch's standard value for that token is -100. Or more specifically
@@ -89,7 +74,7 @@ class VergeDataset(torch.utils.data.Dataset):
         labels = torch.full(true_labels.shape, -100, dtype=torch.long)
         for i in mask_indices:
             labels[i] = true_labels[i]
-            # print('set true label for element %d to %d' % (i, true_labels[i]))
+            # print('set true label for element %d to %d' % (i, true_labels[i]))00
 
         # Shuffle the features and labels.
         perm = torch.randperm(masked_features.shape[0])
