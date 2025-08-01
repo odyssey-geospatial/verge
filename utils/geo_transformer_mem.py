@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.utils
 import torch.utils.data
 from torch.utils.data import DataLoader
-
+import pickle
 
 # This class wraps a list of input tile data as a pytorch dataset.
 # The "getitem" method here parses apart the true labels and the encodings,
@@ -15,19 +15,21 @@ from torch.utils.data import DataLoader
 
 class VergeDataset(torch.utils.data.Dataset):
 
-    def __init__(self, instance_fnames, n_classes, mask_fraction, class_prob):
-        self.instance_fnames = instance_fnames
+    def __init__(self, aoi_fnames, n_classes, mask_fraction, class_prob):
+        self.aoi_fnames = aoi_fnames
         self.n_classes = n_classes
         self.mask_fraction = mask_fraction
         self.class_prob = class_prob
         
         # Read all instances.
         self.instances = []
-        for k, instance_fname in enumerate(instance_fnames):
-            if k % 1000 == 0:
-                print('loading instance %d / %d' % (k, len(instance_fnames)))
-            loaded = np.load(instance_fname)
-            self.instances.append(loaded)
+        for aoi_fname in aoi_fnames:
+            print('loading %s' % aoi_fname)
+            with open(aoi_fname, 'rb') as source:
+                loaded = pickle.load(source)
+            print('loaded %d instances from %s' % (len(loaded), aoi_fname))
+            self.instances += list(loaded)
+            print('%d instances total' % len(self.instances))
 
     
     def __len__(self):
