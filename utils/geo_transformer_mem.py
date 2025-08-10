@@ -24,12 +24,10 @@ class VergeDataset(torch.utils.data.Dataset):
         # Read all instances.
         self.instances = []
         for aoi_fname in aoi_fnames:
-            print('loading %s' % aoi_fname)
             with open(aoi_fname, 'rb') as source:
                 loaded = pickle.load(source)
             print('loaded %d instances from %s' % (len(loaded), aoi_fname))
             self.instances += list(loaded)
-            print('%d instances total' % len(self.instances))
 
     
     def __len__(self):
@@ -42,6 +40,9 @@ class VergeDataset(torch.utils.data.Dataset):
         loaded = self.instances[idx]
         features = loaded['features']
         true_labels = loaded['labels']
+        aoi_tag = loaded['aoi_tag']
+        tile_tag = loaded['tile_tag']
+        ident = '%s:%s' % (aoi_tag, tile_tag)
 
         encodings = features[:, self.n_classes:]
         true_labels_onehot = features[:, :self.n_classes]
@@ -92,7 +93,7 @@ class VergeDataset(torch.utils.data.Dataset):
         masked_features = masked_features[perm]
         labels = labels[perm]
 
-        return (masked_features, labels)
+        return (masked_features, labels, ident)
 
 
 # Define the function that puts together a batch. The main thing we are handling here
@@ -100,7 +101,7 @@ class VergeDataset(torch.utils.data.Dataset):
 # with excess space filled with padding tokens.
 def verge_collate_fn(batch):
 
-    features, labels = zip(*batch)
+    features, labels, idents = zip(*batch)
     max_len = max(x.shape[0] for x in features)
     batch_size = len(features)
     feature_dim = features[0].shape[1]
@@ -115,7 +116,7 @@ def verge_collate_fn(batch):
         padded_labels[i, :n] = labels[i]
         attention_mask[i, :n] = 1
 
-    return padded_features, padded_labels, attention_mask
+    return padded_features, padded_labels, attention_mask, idents
 
 
 
