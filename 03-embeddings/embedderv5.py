@@ -173,6 +173,7 @@ class ContrastivePairDataset(Dataset):
     """
     
     def __init__(self, sequences: List[np.ndarray], similarity_features: np.ndarray, 
+                 idents: List[str], 
                  similarity_threshold: float = 0.5, num_negatives: int = 1):
         """
         Args:
@@ -185,6 +186,7 @@ class ContrastivePairDataset(Dataset):
         self.similarity_features = similarity_features
         self.similarity_threshold = similarity_threshold
         self.num_negatives = num_negatives
+        self.idents = idents
         
         assert len(sequences) == len(similarity_features)
         
@@ -225,6 +227,7 @@ class ContrastivePairDataset(Dataset):
         """
         anchor_seq = self.sequences[anchor_idx]
         anchor_sim = self.similarity_features[anchor_idx]
+        anchor_ident = self.idents[anchor_idx]
         
         # Sample a positive (if any exist)
         if len(self.positive_map[anchor_idx]) > 0:
@@ -250,7 +253,7 @@ class ContrastivePairDataset(Dataset):
         neg_sims = [self.similarity_features[idx] for idx in neg_indices]
         
         return {
-            'anchor': (anchor_seq, anchor_sim),
+            'anchor': (anchor_seq, anchor_sim, anchor_ident),
             'positive': (pos_seq, pos_sim),
             'negatives': [(seq, sim) for seq, sim in zip(neg_seqs, neg_sims)]
         }
@@ -610,4 +613,4 @@ if __name__ == "__main__":
         
         # Check similarity between anchors and positives
         similarities = F.cosine_similarity(embeddings, pos_embeddings, dim=1)
-        print(f"Anchor-Positive similarities: {similarities.mean().item():.4f} ± {similarities.std().item():.4f}")
+        print(f"Anchor-Positive similarities: {similarities.mean().item():.4f} Â± {similarities.std().item():.4f}")
