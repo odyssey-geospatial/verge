@@ -266,7 +266,7 @@ def triplet_collate_fn(batch):
     anchors, positives, negatives_list = [], [], []
     
     for item in batch:
-        anchor_seq, anchor_sim = item['anchor']
+        anchor_seq, anchor_sim, anchor_ident = item['anchor']
         pos_seq, pos_sim = item['positive']
         neg_items = item['negatives']
         
@@ -613,4 +613,4 @@ if __name__ == "__main__":
         
         # Check similarity between anchors and positives
         similarities = F.cosine_similarity(embeddings, pos_embeddings, dim=1)
-        print(f"Anchor-Positive similarities: {similarities.mean().item():.4f} Â± {similarities.std().item():.4f}")
+        print(f"Anchor-Positive similarities: {similarities.mean().item():.4f} Ã‚Â± {similarities.std().item():.4f}")
